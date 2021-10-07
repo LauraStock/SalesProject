@@ -6,7 +6,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Utilities\" />
+    <None Remove="Data\dbSetup.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Data\dbSetup.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MySql.Data" Version="8.0.26" />
   </ItemGroup>
 
 </Project>
