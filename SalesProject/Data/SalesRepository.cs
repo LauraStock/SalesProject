@@ -70,7 +70,7 @@ namespace SalesProject.Data
             return result > 0;
         }
         
-        //can override this method for different number of placeholders and types?
+        //can override this method for different number of placeholders and types (use var type)?
         internal MySqlCommand PrepCommandInt(string sqlCommand,string placeHolder, int val)
         {
             //possibly put this in as an extension to the MySqlCommand class?
