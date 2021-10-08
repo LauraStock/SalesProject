@@ -13,8 +13,12 @@ namespace SalesProject
 
             using (connection = MySqlUtils.GetConnection())
             {
+                Sale item = new Sale(4, "Peanuts", 1, 0.75);
+
                 SalesRepository repo = new SalesRepository(connection);
-                Console.WriteLine(repo.Exists());
+                repo.Create(item);
+                Console.WriteLine("Creation has run");
+                //Console.WriteLine(repo.Exists());
                 /*
                 //opening the db connection and creating the sales db if it does not exist.
                 connection.Open();
