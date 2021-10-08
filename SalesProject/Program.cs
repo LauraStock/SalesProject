@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using MySql.Data.MySqlClient;
 using SalesProject.Data;
 
@@ -13,6 +14,7 @@ namespace SalesProject
             using (connection = MySqlUtils.GetConnection())
             {
                 SalesRepository repo = new SalesRepository(connection);
+                Console.WriteLine(repo.Exists());
                 /*
                 //opening the db connection and creating the sales db if it does not exist.
                 connection.Open();
