@@ -10,11 +10,9 @@ namespace SalesProject.Services
     class SalesService
     {
         private readonly SalesRepository repo;
-        private static int counter;
         public SalesService(SalesRepository repo)
         {
-            this.repo = repo;
-            counter = 1;      
+            this.repo = repo; 
         }
 
         public void Create(string productName, string quantityString, string priceString)
@@ -22,16 +20,16 @@ namespace SalesProject.Services
             // need to check and change quantity and price to numbers
             int quantity = checkIsInt(quantityString);
             double price = checkIsDouble(priceString);
-            Sale item = new Sale(counter, productName, quantity, price);
+            Console.WriteLine("We are in create in the service");
+            Sale item = new Sale(productName, quantity, price);
             repo.Create(item);
             Console.WriteLine("Creation has run");
-            counter++;
         }
 
         public void ReadInDate(int function, int year, int month = 0, int day = 0)
         {   
             // option should be 0-read all, 1-total, 2-min, 3-max, 4-average
-            // if month is passed, can also slect for month
+            // if month is passed, can also select for month
             // check if year is 4 characters and within speciic dates 
             IList<Sale> saleList = repo.Read();
             // does the database contain anything for this time period?

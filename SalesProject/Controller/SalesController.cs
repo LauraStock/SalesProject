@@ -46,27 +46,49 @@ namespace SalesProject.Controller
 
         public void Read()
         {
-            string[] readOptions = { "sales by year", "sales by month", "total sales by year", "total sales by month", "back" };
-            int option = getUserOption(readOptions);
-            int year = GetYear();
+            string[] readOptions = { "y", "m", "d", "between", "back" };
+            int dateOption = getUserOption(readOptions);
 
-            switch (option)
+            switch (dateOption)
             {
-                case 1:
-                    
-                default:
-                    Console.WriteLine("We made it!");
+                case 4:
+                    //get both dates
                     break;
-
-
+                case 3:
+                    int day = GetInt("day");
+                    goto case 2;
+                case 2:
+                    int month = GetMonth();
+                    goto case 1;
+                case 1:
+                    int year = GetInt("year");
+                    break;
+                default:
+                     // could get rid of ^break statement and put the next menu in a function
+                     // means you can go straight to ReadInDate or ReadBetweendates function in switch statement
+                     // or put the two decisions the other way round?
+                    break;
             }
+
+            Console.WriteLine("What would you like to view?");
+            Console.WriteLine("1. All sales");
+            Console.WriteLine("2. Total sales");
+            Console.WriteLine("3. Minimum price");
+            Console.WriteLine("4. Maximum price");
+            Console.WriteLine("5. Average price");
+            Console.WriteLine("6. Back");
+
+            string[] funOptions = { "all", "total", "min", "max", "av", "b" };
+            int functionOption = getUserOption(funOptions);
+            // option for function to be carried out should be 0-read all, 1-total, 2-min, 3-max, 4-average
+              
 
         }
 
-        internal int GetYear()
+        internal int GetInt(string timeFrame)
         {
             Console.Clear();
-            Console.WriteLine("What year would you like to view?");
+            Console.WriteLine($"What {timeFrame} would you like to view?");
             Console.Write("> ");
             string input = Console.ReadLine();
             if (int.TryParse(input, out int year))
