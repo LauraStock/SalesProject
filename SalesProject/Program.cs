@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 using MySql.Data.MySqlClient;
+using SalesProject.Controller;
 using SalesProject.Data;
+using SalesProject.Services;
 
 namespace SalesProject
 {
@@ -14,17 +16,14 @@ namespace SalesProject
 
             using (connection = MySqlUtils.GetConnection())
             {
-                Sale item = new Sale(1,"Peanuts",2, 4.00);
-
                 SalesRepository repo = new SalesRepository(connection);
-                repo.Create(item);
-                Console.WriteLine("Creation has run");
-                IList<Sale> saleList = repo.Read();
+                SalesService service = new SalesService(repo);
+                SalesController controller = new SalesController(service);
 
-                foreach (Sale thing in saleList) {
-                    Console.WriteLine(thing);
-                }
-                
+                Menu menu = new Menu(controller);
+                Console.WriteLine(menu);
+                menu.MenuLoop();
+
                 //Console.WriteLine(repo.Exists());
                 /*
                 //opening the db connection and creating the sales db if it does not exist.
