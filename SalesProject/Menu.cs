@@ -24,7 +24,6 @@ namespace SalesProject
                 Console.WriteLine("1. Data Entry");
                 Console.WriteLine("2. Reports");
                 Console.WriteLine("3. Quit");
-                Console.Write("> ");
 
                 int option = controller.NavigateMainMenu();
 
@@ -44,10 +43,17 @@ namespace SalesProject
             
         }
 
-        private void ReadMenu()
+        internal void ReadMenu()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            Console.WriteLine("1. Sales by Year");
+            Console.WriteLine("2. Sales by Month and Year");
+            Console.WriteLine("3. Total Sales by Year");
+            Console.WriteLine("4. Total Sales by Month and Year");
+            Console.WriteLine("5. Back");
+            controller.Read();
         }
+
 
         internal void CreateMenu()
         { 
