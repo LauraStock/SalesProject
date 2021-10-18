@@ -26,12 +26,22 @@ namespace SalesProject.Data
 
         //constructors
         public Sale(int salesID, string productName, int quantity, double price)
-        {
+        {   // this is the constructor for creating Sales (automatically creates now date)
             this.salesID = salesID;
             this.productName = productName;
             this.quantity = quantity;
             this.price = price;
             this.saleDate = DateTime.Now;
+        }
+
+        public Sale(int salesID, string productName, int quantity, double price, DateTime saleDate)
+        {
+            // sale constructor for reading sales (takes the date from the db rather than assigning now)
+            this.salesID = salesID;
+            this.productName = productName;
+            this.quantity = quantity;
+            this.price = price;
+            this.saleDate = saleDate;
         }
 
         //methods
