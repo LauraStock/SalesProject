@@ -30,6 +30,20 @@ namespace SalesProject.Controller
 
         }
 
+        public void Create()
+        {
+            Console.Clear();
+            Console.Write("Please enter product name: \n> ");
+            string productName = Console.ReadLine();
+            Console.Write("Quantity: \n> "); // could put an option to start again or go back?
+            string quantity = Console.ReadLine();
+            Console.Write("Price: \n> ");
+            string price = Console.ReadLine();
+            Console.WriteLine($"The sale to add is: \n{productName} \nQuantity {quantity} \nPrice {price} \n \n Continue? (Y/N)");
+            string go = Console.ReadLine();
+            service.Create(productName,quantity,price);
+        }
+
         public void Read()
         {
             string[] readOptions = { "sales by year", "sales by month", "total sales by year", "total sales by month", "back" };
@@ -38,8 +52,13 @@ namespace SalesProject.Controller
 
             switch (option)
             {
-                
+                case 1:
                     
+                default:
+                    Console.WriteLine("We made it!");
+                    break;
+
+
             }
 
         }

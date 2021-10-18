@@ -20,6 +20,7 @@ namespace SalesProject
 
             while (inLoop)
             {
+                Console.Clear();
                 Console.WriteLine("-----SALES-----");
                 Console.WriteLine("1. Data Entry");
                 Console.WriteLine("2. Reports");
@@ -30,7 +31,7 @@ namespace SalesProject
                 switch (option)
                 {
                     case 1:
-                        CreateMenu();
+                        controller.Create(); 
                         break;
                     case 2:
                         ReadMenu();
@@ -55,9 +56,7 @@ namespace SalesProject
         }
 
 
-        internal void CreateMenu()
-        { 
-        }
+        
 
         
     }
