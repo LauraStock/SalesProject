@@ -30,17 +30,15 @@ namespace SalesProject.Data
         internal void Create(Sale item)
         { 
 
-            string MySqlString = $"INSERT INTO sales(ProductName, Quantity, Price) VALUES(@productName,quantity,@price)";
+            string MySqlString = $"INSERT INTO sales(ProductName, Quantity, Price) VALUES(@productName,@quantity,@price)";
             MySqlCommand command = connection.CreateCommand();
 
-            //could use prepare statement as PrepCommand(string SqlCommand, string placeHolder1, var val1, string placeHolder2, var val2...)
             command.CommandText = MySqlString;
             Console.WriteLine($"nom: {item.productName}");
             command.Parameters.AddWithValue("@productName", $"{item.productName}");
             command.Parameters.AddWithValue("@quantity",item.quantity);
             command.Parameters.AddWithValue("@price",item.price);
             
-
             connection.Open();
             command.Prepare();
             command.ExecuteNonQuery();

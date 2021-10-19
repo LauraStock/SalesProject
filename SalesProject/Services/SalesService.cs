@@ -26,12 +26,14 @@ namespace SalesProject.Services
             Console.WriteLine("Creation has run");
         }
 
-        public void ReadInDate(int function, int[] dates)
+        public void ReadInDate(int function, int[] date)
         {   
-            
+            //check for valid dates
+            // add 0 for missing values 
+            // pass to repo
             // option should be 0-read all, 1-total, 2-min, 3-max, 4-average
             // if month is passed, can also select for month
-            // check if year is 4 characters and within speciic dates 
+            // check if year is 4 characters and within specific dates, same for days
             IList<Sale> saleList = repo.Read();
             // does the database contain anything for this time period?
             foreach (Sale thing in saleList)
@@ -40,7 +42,7 @@ namespace SalesProject.Services
             }
         }
 
-        public void ReadBetweenDates(int function, int year1, int year2, int month1 = 0, int month2 = 0, int day1 = 0, int day2 = 0)
+        public void ReadBetweenDates(int function, int[] date)
         { 
             // if any of the values are 0 - only use the ones before that, at minimum will have the years
             // check which date is the lower one is the lower one
