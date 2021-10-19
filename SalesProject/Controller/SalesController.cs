@@ -44,10 +44,24 @@ namespace SalesProject.Controller
             service.Create(productName,quantity,price);
         }
 
-        public void Read()
+        public void ReadMenu1()
         {
+            string[] funOptions = { "all", "total", "min", "max", "av", "b" };
+            int functionOption = getUserOption(funOptions);
+            // option for function to be carried out should be 0-read all, 1-total, 2-min, 3-max, 4-average
+            if (functionOption < 6)
+            {
+                ReadMenu2(functionOption);
+            }              
+        }
+
+        public void ReadMenu2(int functionOption)
+        {
+            Console.WriteLine("For what period?");
+            Console.Write("1. A Year \n2. A Month \n3. A Day \n4. Between two dates \n5. Back");
             string[] readOptions = { "y", "m", "d", "between", "back" };
             int dateOption = getUserOption(readOptions);
+            int[] dates = { };
 
             switch (dateOption)
             {
@@ -55,34 +69,21 @@ namespace SalesProject.Controller
                     //get both dates
                     break;
                 case 3:
-                    int day = GetInt("day");
+                    dates.Append(GetInt("day"));
                     goto case 2;
                 case 2:
-                    int month = GetMonth();
+                    dates.Append(GetMonth());
                     goto case 1;
                 case 1:
-                    int year = GetInt("year");
+                    dates.Append(GetInt("year"));                    
+                    service.ReadInDate(functionOption, dates);
                     break;
                 default:
-                     // could get rid of ^break statement and put the next menu in a function
-                     // means you can go straight to ReadInDate or ReadBetweendates function in switch statement
-                     // or put the two decisions the other way round?
+                    // could get rid of ^break statement and put the next menu in a function
+                    // means you can go straight to ReadInDate or ReadBetweendates function in switch statement
+                    // or put the two decisions the other way round?
                     break;
             }
-
-            Console.WriteLine("What would you like to view?");
-            Console.WriteLine("1. All sales");
-            Console.WriteLine("2. Total sales");
-            Console.WriteLine("3. Minimum price");
-            Console.WriteLine("4. Maximum price");
-            Console.WriteLine("5. Average price");
-            Console.WriteLine("6. Back");
-
-            string[] funOptions = { "all", "total", "min", "max", "av", "b" };
-            int functionOption = getUserOption(funOptions);
-            // option for function to be carried out should be 0-read all, 1-total, 2-min, 3-max, 4-average
-              
-
         }
 
         internal int GetInt(string timeFrame)
@@ -113,7 +114,7 @@ namespace SalesProject.Controller
 
         internal int getUserOption(string[] options)
         {
-            Console.Write("> ");
+            Console.Write("\n> ");
             string input = Console.ReadLine();
             input = input.ToLower();
             for (int i = 1; i <= options.Length; i++)

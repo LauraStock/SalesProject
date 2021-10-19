@@ -26,8 +26,9 @@ namespace SalesProject.Services
             Console.WriteLine("Creation has run");
         }
 
-        public void ReadInDate(int function, int year, int month = 0, int day = 0)
+        public void ReadInDate(int function, int[] dates)
         {   
+            
             // option should be 0-read all, 1-total, 2-min, 3-max, 4-average
             // if month is passed, can also select for month
             // check if year is 4 characters and within speciic dates 

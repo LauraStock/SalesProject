@@ -47,13 +47,14 @@ namespace SalesProject
         internal void ReadMenu()
         {
             Console.Clear();
-            Console.WriteLine("Would you like to see reports for");
-            Console.WriteLine("1. A Year");
-            Console.WriteLine("2. A Month");
-            Console.WriteLine("3. A Day");
-            Console.WriteLine("4. Between two dates");
-            Console.WriteLine("5. Back");
-            controller.Read();
+            Console.WriteLine("What would you like to view?");
+            Console.WriteLine("1. All sales");
+            Console.WriteLine("2. Total sales");
+            Console.WriteLine("3. Minimum price");
+            Console.WriteLine("4. Maximum price");
+            Console.WriteLine("5. Average price");
+            Console.WriteLine("6. Back");
+            controller.ReadMenu1();
         }
 
 
