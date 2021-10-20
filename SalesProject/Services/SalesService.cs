@@ -34,7 +34,7 @@ namespace SalesProject.Services
             // option should be 0-read all, 1-total, 2-min, 3-max, 4-average
             // if month is passed, can also select for month
             // check if year is 4 characters and within specific dates, same for days
-            IList<Sale> saleList = repo.Read();
+            IList<Sale> saleList = repo.Read(function, date);
             // does the database contain anything for this time period?
             foreach (Sale thing in saleList)
             {
