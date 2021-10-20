@@ -10,29 +10,82 @@ namespace SalesProject.Services
     class SalesService
     {
         private readonly SalesRepository repo;
-        private static int counter;
         public SalesService(SalesRepository repo)
         {
-            this.repo = repo;
-            counter = 1;      
+            this.repo = repo; 
         }
 
-        public void Create()
+        public void Create(string productName, string quantityString, string priceString)
         {
-            Sale item = new Sale(1, "Peanuts", 2, 4.00);
-
+            // need to check and change quantity and price to numbers
+            int quantity = checkIsInt(quantityString);
+            double price = checkIsDouble(priceString);
+            Console.WriteLine("We are in create in the service");
+            Sale item = new Sale(productName, quantity, price);
             repo.Create(item);
             Console.WriteLine("Creation has run");
         }
 
-        public void Read()
-        {
-            IList<Sale> saleList = repo.Read();
-
+        public void ReadInDate(int function, int[] date)
+        {   
+            //check for valid dates
+            // add 0 for missing values 
+            // pass to repo
+            // option should be 0-read all, 1-total, 2-min, 3-max, 4-average
+            // if month is passed, can also select for month
+            // check if year is 4 characters and within specific dates, same for days
+            IList<Sale> saleList = repo.Read(function, date);
+            // does the database contain anything for this time period?
             foreach (Sale thing in saleList)
             {
                 Console.WriteLine(thing);
             }
+        }
+
+        public void ReadBetweenDates(int function, int[] date)
+        { 
+            // if any of the values are 0 - only use the ones before that, at minimum will have the years
+            // check which date is the lower one is the lower one
+        }
+
+        internal int checkIsInt(string input)
+        {
+            if (int.TryParse(input, out int value))
+            {
+                return value;
+            }
+            else
+            {
+                Console.WriteLine("We need to throw an exception here");
+                return 0;
+            }
+        }
+
+        internal double checkIsDouble(string input)
+        {
+            if (double.TryParse(input, out double value))
+            {
+                return value;
+            }
+            else
+            {
+                Console.WriteLine("We need to throw an exception here");
+                return 0;
+            }
+        }
+
+        internal DateTime checkIsDateTime(string input)
+        {
+            if (DateTime.TryParse(input, out DateTime value))
+            {
+                return value;
+            }
+            else
+            {
+                Console.WriteLine("We need to throw an exception here");
+                return DateTime.Now;
+            }
+
         }
         
         

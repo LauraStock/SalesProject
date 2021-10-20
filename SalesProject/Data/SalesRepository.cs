@@ -30,17 +30,15 @@ namespace SalesProject.Data
         internal void Create(Sale item)
         { 
 
-            string MySqlString = $"INSERT INTO sales(ProductName, Quantity, Price) VALUES(@productName,quantity,@price)";
+            string MySqlString = $"INSERT INTO sales(ProductName, Quantity, Price) VALUES(@productName,@quantity,@price)";
             MySqlCommand command = connection.CreateCommand();
 
-            //could use prepare statement as PrepCommand(string SqlCommand, string placeHolder1, var val1, string placeHolder2, var val2...)
             command.CommandText = MySqlString;
             Console.WriteLine($"nom: {item.productName}");
             command.Parameters.AddWithValue("@productName", $"{item.productName}");
             command.Parameters.AddWithValue("@quantity",item.quantity);
             command.Parameters.AddWithValue("@price",item.price);
             
-
             connection.Open();
             command.Prepare();
             command.ExecuteNonQuery();
@@ -48,12 +46,46 @@ namespace SalesProject.Data
 
         }
 
-        internal IList<Sale> Read()
+        internal void Read(int function, string[] date)
         {
             IList salesList = new List<Sale>();
 
             MySqlCommand command = connection.CreateCommand();
-            command.CommandText = "SELECT * FROM sales";
+            string selectCommand = "";
+            
+
+            switch (function)
+            {
+                case 1:
+                    selectCommand = "SELECT * FROM sales";
+                    break;
+                case 2:
+                    selectCommand = "SELECT sum(price) from sales";
+                    break;
+                case 3:
+                    selectCommand = "SELECT *, MIN(price) FROM sales";
+                    break;
+                case 4:
+                    selectCommand = "SELECT *, MAX(price) FROM sales";
+                    break;
+                case 5:
+                    selectCommand = "SELECT AVG(price) FROM sales";
+                    break;
+                case 6:
+                    selectCommand = "SELECT COUNT(price) FROM sales";
+                    break;
+                default:
+                    break;
+            }
+            string[] dateString = {"YEAR(SaleDate) = @year","AND MONTH(SaleDate) = @month","AND DAY(SaleDate) = @day"};
+            string conditionCommand = "";
+            for (int i = 0; i < date.Length; i++)
+            {
+                conditionCommand = conditionCommand + dateString[i];
+                
+            }
+            command.CommandText = selectCommand + " " + conditionCommand + ";";
+            Console.WriteLine(selectCommand + " " + conditionCommand + ";");
 
             connection.Open();
             MySqlDataReader reader = command.ExecuteReader();
@@ -70,8 +102,6 @@ namespace SalesProject.Data
                 salesList.Add(sale);
             }
             connection.Close();
-
-            return (IList<Sale>) salesList;
 
         }
 

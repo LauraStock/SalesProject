@@ -20,18 +20,18 @@ namespace SalesProject
 
             while (inLoop)
             {
+                Console.Clear();
                 Console.WriteLine("-----SALES-----");
                 Console.WriteLine("1. Data Entry");
                 Console.WriteLine("2. Reports");
                 Console.WriteLine("3. Quit");
-                Console.Write("> ");
 
                 int option = controller.NavigateMainMenu();
 
                 switch (option)
                 {
                     case 1:
-                        CreateMenu();
+                        controller.Create(); 
                         break;
                     case 2:
                         ReadMenu();
@@ -44,14 +44,21 @@ namespace SalesProject
             
         }
 
-        private void ReadMenu()
+        internal void ReadMenu()
         {
-            throw new NotImplementedException();
+            Console.Clear();
+            Console.WriteLine("What would you like to view?");
+            Console.WriteLine("1. All sales");
+            Console.WriteLine("2. Total sales");
+            Console.WriteLine("3. Minimum price");
+            Console.WriteLine("4. Maximum price");
+            Console.WriteLine("5. Average price");
+            Console.WriteLine("6. Back");
+            controller.ReadMenu1();
         }
 
-        internal void CreateMenu()
-        { 
-        }
+
+        
 
         
     }
