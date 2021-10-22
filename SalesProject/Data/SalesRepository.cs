@@ -46,53 +46,28 @@ namespace SalesProject.Data
 
         }
 
-        internal string ConditionQuery(int dateOption)
+        internal string ConditionQuery()
         {
             //condition statement will always be in the same format
 
             //WHERE SaleDate BETWEEN '@year1-@month1-@day1' AND '@year2-@month2-@day2';
 
-            string conditionString = "WHERE SaleDate BETWEEN '@year1-@month1-@day1' AND '@year2-@month2-@day2';";
-            // format create string " where SaleDate between '@year1-@month1-@day1' and '@year2-@month2-@day2'
+            string conditionString = " WHERE SaleDate BETWEEN ' @year1 - @month1 - @day1 ' AND ' @year2 - @month2 - @day2 ';";
             //create placeholder list @year1 etc strings
-            // if one date
-            // count number of values
-            // build string ' where year(SaleDate) = @year1' etc
-            // create placeholder string list
             return conditionString;
         }
 
-        
-            
-            // also need a set condition variables depending on dateOption.
-            // Lists would be: format -> year1,month1,day1,year2,month2,day2
-            // 1 -> date[0].Year, '0', '0', date[1].Year, '0','0'
-            // 2-> date[0].Year, date[0].Month, '0', date[1].Year,date[1].Month,'0'
-            // 3 -> date[0].Year,date[0].Month, date[0].Day, date[1].Year, date[1].Month, date[1].Day
-
-
-        /*
-        internal IList<Sale> ReadOutList(int dateOption, IList<DateTime> date)
+        internal MySqlCommand PrepReadCommand(string sqlCommand, IList<string> dateValues)
         {
-            string selectQuery = "SELECT * FROM sales "; // output type IList
-            string condQuery = ConditionQuery(dateOption);
-            string query = selectQuery + condQuery;
-            Console.WriteLine(query);
-        }
-
-        internal MySqlCommand PrepCommandDate(string sqlCommand, int dateOption, IList<DateTime> date)
-        {
-            string[] placeholders = {"@year1", "@month1", "@date1","@year2","@month2","@date2"};
+            string[] placeholders = {"@year1", "@month1", "@day1","@year2","@month2","@day2"};
             MySqlCommand command = connection.CreateCommand();
             command.CommandText = sqlCommand;
 
-            if (date.Count == 2)
-            { 
-                for 
+            for (int i = 0; i < 6; i++)
+            {
+                Console.WriteLine($"placeholder is {placeholders[i]} and value is {dateValues[i]}");
+                command.Parameters.AddWithValue(placeholders[i], dateValues[i]);
             }
-
-
-            command.Parameters.AddWithValue(placeholders, val1);
 
             connection.Open();
             command.Prepare();
@@ -109,23 +84,28 @@ namespace SalesProject.Data
         // pass string and list of dates to prep command function which prepares this
         // reader function -> two types: multi column, single value (execute scalar?)
         // prints output to console and returns success bool
-
-
-        internal void Read(int function, IList<int> date)
+        /*
+        internal IList<Sale> ReadOutList(int dateOption, IList<DateTime> date)
+        {
+            string selectQuery = "SELECT * FROM sales "; // output type IList
+            string condQuery = ConditionQuery(dateOption);
+            string query = selectQuery + condQuery;
+            Console.WriteLine(query);
+        }
+        */
+        internal void Read(IList<string> date, int selectOption)
         {
             IList salesList = new List<Sale>();
 
-            MySqlCommand command = connection.CreateCommand();
             string selectCommand = "";
-            
 
-            switch (function)
+            switch (selectOption)
             {
                 case 1:
                     selectCommand = "SELECT * FROM sales"; // output type IList
                     break;
                 case 2:
-                    selectCommand = "SELECT sum(price) from sales"; // output type double
+                    selectCommand = "SELECT sum(price*quantity) from sales"; // output type double
                     break;
                 case 3:
                     selectCommand = "SELECT *, MIN(price) FROM sales"; // output type Sale
@@ -142,17 +122,31 @@ namespace SalesProject.Data
                 default:
                     break;
             }
-            string[] dateString = {"YEAR(SaleDate) = @year"," AND MONTH(SaleDate) = @month"," AND DAY(SaleDate) = @day"};
-            string conditionCommand = "";
-            for (int i = 0; i < date.Count; i++)
+            string conditionCommand = ConditionQuery();
+            string sqlQuery = selectCommand + " " + conditionCommand;
+            //MySqlCommand command = PrepReadCommand(sqlQuery, date);
+            string[] placeholders = { "@year1", "@month1", "@day1", "@year2", "@month2", "@day2" };
+            MySqlCommand command = connection.CreateCommand();
+            command.CommandText = sqlQuery;
+            int i = 2021;
+            command.Parameters.AddWithValue("@year1",i);
+            Console.WriteLine(command.CommandText);
+            /*
+            for (int i = 0; i < 6; i++)
             {
-                conditionCommand = conditionCommand + dateString[i];
-                
+                Console.WriteLine($"placeholder is {placeholders[i]} and value is {date[i]}");
+                command.Parameters.AddWithValue(placeholders[i], date[i]);
             }
-            command.CommandText = selectCommand + " " + conditionCommand + ";";
-            Console.WriteLine(selectCommand + " " + conditionCommand + ";");
-
+            */
+            //command.CommandText = "select * from sales where SaleDate = '2021-09-30';";
+            
             connection.Open();
+            command.Prepare();            
+
+            Console.WriteLine("We are back in the read repo function");
+
+            Console.WriteLine(command.CommandText);
+            
             MySqlDataReader reader = command.ExecuteReader();
 
             while (reader.Read())
@@ -167,8 +161,16 @@ namespace SalesProject.Data
                 salesList.Add(sale);
             }
             connection.Close();
+
+            foreach (Sale item in salesList)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine($"Sales list is {salesList.Count}");
+            
         }
 
+        /*
         internal bool Exists()
         {
             

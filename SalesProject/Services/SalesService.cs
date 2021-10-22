@@ -49,30 +49,34 @@ namespace SalesProject.Services
             {
                 Console.WriteLine($"Item is {item}");
             }
-            
+
             // should probably format the date variables here and then pass to repo
 
+            // option should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count
+            repo.Read(dateVariables, selectOption);
+            /*
             switch (selectOption)
             {
                 case 1:
-                    IList<Sale> output = repo.ReadOutList(dateVariables);
+                    repo.ReadOutList(dateVariables);
                     break;
                 case 2:
                 case 5:
-                    double output = repo.ReadOutDouble(dateVariables, selectOption);
+                    repo.ReadOutDouble(dateVariables, selectOption);
                     break;
                 case 3:
                 case 4:
-                    Sale output = repo.ReadOutSale(dateVariables, selectOption);
+                    repo.ReadOutSale(dateVariables, selectOption);
                     break;
                 case 6:
-                    int output = repo.ReadOutInt(dateVariables);
+                    repo.ReadOutInt(dateVariables);
                     break;
             }
+            */
             //Console.WriteLine(output);
             
             //check for valid dates
-            // option should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count
+            
             //switch around this and send to repo functions based on output (double, int,list,Sale)
             // need to pass function, list of dates
             
