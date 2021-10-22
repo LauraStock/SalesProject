@@ -62,28 +62,33 @@ namespace SalesProject.Controller
             string[] readOptions = { "y", "m", "d", "between two y","between two m","between two d", "back" };
             int dateOption = getUserOption(readOptions);
             int loop = 1;
+            IList < DateTime > dates = new List<DateTime>();
 
             if (dateOption > 3 && dateOption != 7)
             {
                 loop = 2; // number of dates that need to be collected
             }
 
-            int[] dates = { };
-
             for (int i = 0; i < loop; i++)
             {   if (dateOption == 7)
-                { break; }
+                { return; }
                 Console.WriteLine($"date option % 3 is {dateOption % 3}");
+                string input = "";
                 switch (dateOption % 3)
                 {
                     case 0:
-                        dates.Append(GetInt("day"));
-                        goto case 2;
+                        Console.WriteLine("Enter the date to view (dd/mm/yyyy) \n> ");
+                        input = Console.ReadLine();
+                        //dates.Add(GetInt("day"));
+                        break;
                     case 2:
-                        dates.Append(GetMonth());
-                        goto case 1;
+                        Console.WriteLine("Enter the month to view (mm/yyyy) \n> ");
+                        input = Console.ReadLine();
+                        break;
                     case 1:
-                        dates.Append(GetInt("year"));
+                        Console.WriteLine("Enter the year to view (yyyy) \n> ");
+                        string filler = (loop == 1) ? "01/01/" : "31/12/";
+                        input = filler + Console.ReadLine();
                         break;
                     default:
                         // could get rid of ^break statement and put the next menu in a function
@@ -91,17 +96,17 @@ namespace SalesProject.Controller
                         // or put the two decisions the other way round?
                         break;
                 }
+                
+            
+                DateTime date = DateTime.Parse(input);
+                dates.Add(date);
             }
 
-            if (loop == 2)
-            {
-                service.ReadBetweenDates(functionOption, dates);
-            }
-            else
-            {
-                service.ReadInDate(functionOption, dates);
-            }
-            
+            Console.WriteLine($"Date is {dates[0]}");
+            service.Read(functionOption, dateOption, dates);
+
+
+
         }
 
         internal int GetInt(string timeFrame)
@@ -124,7 +129,7 @@ namespace SalesProject.Controller
         {
             Console.Clear();
             Console.Write("What month would you like to view? (if not applicable, enter 0)");
-            string[] monthOptions = { "jan", "feb", "mar", "apr", "may", "jun", "aug", "sep", "oct", "nov", "dec" };
+            string[] monthOptions = { "jan", "feb", "mar", "apr", "may", "jun","jul", "aug", "sep", "oct", "nov", "dec" };
             int month = getUserOption(monthOptions);
             return month;
         }

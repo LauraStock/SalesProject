@@ -20,7 +20,7 @@ namespace SalesProject
 
             while (inLoop)
             {
-                Console.Clear();
+                //Console.Clear();
                 Console.WriteLine("-----SALES-----");
                 Console.WriteLine("1. Data Entry");
                 Console.WriteLine("2. Reports");
