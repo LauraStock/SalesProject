@@ -46,10 +46,10 @@ namespace SalesProject.Controller
 
         public void ReadMenu1()
         {
-            string[] funOptions = { "all", "total", "min", "max", "av", "b" };
+            string[] funOptions = { "all", "total", "min", "max", "av", "count", "b" };
             int functionOption = getUserOption(funOptions);
-            // option for function to be carried out should be 0-read all, 1-total, 2-min, 3-max, 4-average
-            if (functionOption < 6)
+            // option for function to be carried out should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count, 7-back
+            if (functionOption < 7)
             {
                 ReadMenu2(functionOption);
             }              
@@ -72,7 +72,6 @@ namespace SalesProject.Controller
             for (int i = 0; i < loop; i++)
             {   if (dateOption == 7)
                 { return; }
-                Console.WriteLine($"date option % 3 is {dateOption % 3}");
                 string input = "";
                 switch (dateOption % 3)
                 {
@@ -101,8 +100,6 @@ namespace SalesProject.Controller
                 DateTime date = DateTime.Parse(input);
                 dates.Add(date);
             }
-
-            Console.WriteLine($"Date is {dates[0]}");
             service.Read(functionOption, dateOption, dates);
 
 

@@ -39,51 +39,11 @@ namespace SalesProject.Services
             Console.WriteLine("We are in service read");
             Console.WriteLine($"Select is ${selectOption}\n date option is ${dateOption}");
 
-            dateOption = (dateOption % 3);
-            dateOption = (dateOption == 0) ? 3 : dateOption;
-            Console.WriteLine(dateOption);
-
-            IList<string> dateVariables = ConditionVariables(dateOption, date);
-
-            foreach (string item in dateVariables)
-            {
-                Console.WriteLine($"Item is {item}");
+            if (dateOption < 4) {
+                repo.Read(selectOption,dateOption,date);
             }
 
-            // should probably format the date variables here and then pass to repo
 
-            // option should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count
-            repo.Read(dateVariables, selectOption);
-            /*
-            switch (selectOption)
-            {
-                case 1:
-                    repo.ReadOutList(dateVariables);
-                    break;
-                case 2:
-                case 5:
-                    repo.ReadOutDouble(dateVariables, selectOption);
-                    break;
-                case 3:
-                case 4:
-                    repo.ReadOutSale(dateVariables, selectOption);
-                    break;
-                case 6:
-                    repo.ReadOutInt(dateVariables);
-                    break;
-            }
-            */
-            //Console.WriteLine(output);
-            
-            //check for valid dates
-            
-            //switch around this and send to repo functions based on output (double, int,list,Sale)
-            // need to pass function, list of dates
-            
-            // check that something has been returned
-            // print to console if successful
-            // return sucessful indicator, or throw error?
-           
         }
 
         internal IList<string> ConditionVariables(int dateOption, IList<DateTime> dates)
@@ -148,7 +108,7 @@ namespace SalesProject.Services
                     }
                     else
                     {
-                        conditionVariables.Add("0");
+                        conditionVariables.Add("00");
                     }
                     // if j <= dateOption add the dates[i] variable, otherwise add 0
                     
@@ -210,21 +170,7 @@ namespace SalesProject.Services
                 return 0;
             }
         }
-
-        internal DateTime checkIsDateTime(string input)
-        {
-            if (DateTime.TryParse(input, out DateTime value))
-            {
-                return value;
-            }
-            else
-            {
-                Console.WriteLine("We need to throw an exception here");
-                return DateTime.Now;
-            }
-
-        }
-        
+               
         
 }
 }

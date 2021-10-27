@@ -46,35 +46,6 @@ namespace SalesProject.Data
 
         }
 
-        internal string ConditionQuery()
-        {
-            //condition statement will always be in the same format
-
-            //WHERE SaleDate BETWEEN '@year1-@month1-@day1' AND '@year2-@month2-@day2';
-
-            string conditionString = " WHERE SaleDate BETWEEN ' @year1 - @month1 - @day1 ' AND ' @year2 - @month2 - @day2 ';";
-            //create placeholder list @year1 etc strings
-            return conditionString;
-        }
-
-        internal MySqlCommand PrepReadCommand(string sqlCommand, IList<string> dateValues)
-        {
-            string[] placeholders = {"@year1", "@month1", "@day1","@year2","@month2","@day2"};
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = sqlCommand;
-
-            for (int i = 0; i < 6; i++)
-            {
-                Console.WriteLine($"placeholder is {placeholders[i]} and value is {dateValues[i]}");
-                command.Parameters.AddWithValue(placeholders[i], dateValues[i]);
-            }
-
-            connection.Open();
-            command.Prepare();
-            Console.WriteLine("In prep command function");
-            return command;
-        }
-
         // Need 4 different read functions that output different types
         // double, int, list and sale
         // Each one then needs:
@@ -93,12 +64,101 @@ namespace SalesProject.Data
             Console.WriteLine(query);
         }
         */
-        internal void Read(IList<string> date, int selectOption)
+
+        internal void Read(int selectOption, int dateOption, IList<DateTime> date)
         {
-            IList salesList = new List<Sale>();
+            //generate sql query string
+            string sqlQuery = SelectQuery(selectOption);
+            sqlQuery = sqlQuery + ConditionQuery(dateOption);
+            Console.WriteLine(sqlQuery);
 
+            //prepare command 
+            connection.Open();
+            MySqlCommand command = PrepReadCommand(sqlQuery, dateOption, date);
+
+            switch (selectOption) // 1-view all, 2-total, 3-min, 4-max, 5-average,6-count
+            {
+                case 1:
+                    ReadOutList(command);
+                    break;
+                case 2:
+                    ReadOutDouble(command);
+                    break;
+                case 3:
+                    ReadOutSale(command);
+                    break;
+                case 4:
+                    goto case 3;
+                case 5:
+                    goto case 2;
+                case 6:
+                    ReadOutInt(command);
+                    break;
+            }
+            connection.Close();
+        }
+        internal void ReadOutList(MySqlCommand command)
+        {
+            IList< Sale > saleList = new List<Sale>();
+            MySqlDataReader reader = command.ExecuteReader();
+            Console.WriteLine(reader.HasRows);
+
+            while (reader.Read())
+            {
+                int salesID = reader.GetFieldValue<int>(0);
+                Console.WriteLine(salesID);
+                
+                string productName = reader.GetFieldValue<string>(1);
+                int quantity = reader.GetFieldValue<int>(2);
+                double price = reader.GetFieldValue<double>(3);
+                DateTime saleDate = reader.GetFieldValue<DateTime>(4);
+
+                Sale sale = new Sale(salesID, productName, quantity, price, saleDate);
+                saleList.Add(sale);
+                
+            }
+            reader.Close();
+            for (int i = 0; i < saleList.Count; i++)
+            {
+                Console.WriteLine(saleList[i]);
+            }
+        }
+
+        internal void ReadOutDouble(MySqlCommand command)
+        {
+            double result = Convert.ToDouble(command.ExecuteScalar());
+            Console.WriteLine($"The result is £{result}");
+        }
+
+        internal void ReadOutSale(MySqlCommand command)
+        { 
+            MySqlDataReader reader = command.ExecuteReader();
+            Console.WriteLine(reader.HasRows);
+
+            while (reader.Read())
+            {
+                int salesID = reader.GetFieldValue<int>(0);
+                Console.WriteLine(salesID);
+
+                string productName = reader.GetFieldValue<string>(1);
+                int quantity = reader.GetFieldValue<int>(2);
+                double price = reader.GetFieldValue<double>(3);
+                DateTime saleDate = reader.GetFieldValue<DateTime>(4);
+                Sale sale = new Sale(salesID, productName, quantity, price, saleDate);
+                Console.WriteLine(sale);
+            }            
+            reader.Close();
+        }
+
+        internal void ReadOutInt(MySqlCommand command)
+        {
+            int result = Convert.ToInt32(command.ExecuteScalar());
+            Console.WriteLine($"The number of sales is {result}");
+        }
+        
+        internal string SelectQuery(int selectOption)
+        {
             string selectCommand = "";
-
             switch (selectOption)
             {
                 case 1:
@@ -122,55 +182,53 @@ namespace SalesProject.Data
                 default:
                     break;
             }
-            string conditionCommand = ConditionQuery();
-            string sqlQuery = selectCommand + " " + conditionCommand;
-            //MySqlCommand command = PrepReadCommand(sqlQuery, date);
-            string[] placeholders = { "@year1", "@month1", "@day1", "@year2", "@month2", "@day2" };
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = sqlQuery;
-            int i = 2021;
-            command.Parameters.AddWithValue("@year1",i);
-            Console.WriteLine(command.CommandText);
-            /*
-            for (int i = 0; i < 6; i++)
-            {
-                Console.WriteLine($"placeholder is {placeholders[i]} and value is {date[i]}");
-                command.Parameters.AddWithValue(placeholders[i], date[i]);
-            }
-            */
-            //command.CommandText = "select * from sales where SaleDate = '2021-09-30';";
-            
-            connection.Open();
-            command.Prepare();            
-
-            Console.WriteLine("We are back in the read repo function");
-
-            Console.WriteLine(command.CommandText);
-            
-            MySqlDataReader reader = command.ExecuteReader();
-
-            while (reader.Read())
-            {
-                int salesID = reader.GetFieldValue<int>(0);
-                string productName = reader.GetFieldValue<string>(1);
-                int quantity = reader.GetFieldValue<int>(2);
-                double price = reader.GetFieldValue<double>(3);
-                DateTime saleDate = reader.GetFieldValue<DateTime>(4);
-
-                Sale sale = new Sale(salesID, productName, quantity, price, saleDate);
-                salesList.Add(sale);
-            }
-            connection.Close();
-
-            foreach (Sale item in salesList)
-            {
-                Console.WriteLine(item);
-            }
-            Console.WriteLine($"Sales list is {salesList.Count}");
-            
+            return selectCommand;
         }
 
-        /*
+        internal string ConditionQuery(int dateOption)
+        {
+            string sqlCondition = " WHERE";
+            switch (dateOption)
+            {
+                case 3:
+                    sqlCondition = sqlCondition + " DAY(SaleDate) = @day1 AND";
+                    goto case 2;
+                case 2:
+                    sqlCondition = sqlCondition + " MONTH(SaleDate) = @month1 AND";
+                    goto case 1;
+                case 1:
+                    sqlCondition = sqlCondition + " YEAR(SaleDate) = @year1";
+                    break;
+                case 4:
+                    sqlCondition = sqlCondition + "YEAR(SaleDate) BETWEEN @year1 AND @year2";
+                    break;
+            }
+            return sqlCondition;
+        }
+        internal MySqlCommand PrepReadCommand(string sqlQuery, int dateOption, IList<DateTime> date)
+        {
+            MySqlCommand command = connection.CreateCommand();
+            command.CommandText = sqlQuery;
+
+            switch (dateOption)
+            {
+                case 3:
+                    command.Parameters.AddWithValue("@day1", date[0].Day);
+                    goto case 2;
+                case 2:
+                    command.Parameters.AddWithValue("@month1", date[0].Month);
+                    goto case 1;
+                case 1:
+                    command.Parameters.AddWithValue("@year1", date[0].Year);
+                    break;
+                case 4:
+                    command.Parameters.AddWithValue("@year2", date[1].Year);
+                    goto case 1;
+            }
+            command.Prepare();
+            return command;
+        }
+        /*        
         internal bool Exists()
         {
             
@@ -193,22 +251,6 @@ namespace SalesProject.Data
 
             return result > 0;
         }
-        
-        //can override this method for different number of placeholders and types (use var type)?
-        internal MySqlCommand PrepCommandInt(string sqlCommand,string placeHolder1, int val1)
-        {           
-            //how to get number of arguments passed to loop through
-            //int numArgs 
-            //possibly put this in as an extension to the MySqlCommand class?
-            MySqlCommand command = connection.CreateCommand();
-            command.CommandText = sqlCommand;
-            command.Parameters.AddWithValue(placeHolder1, val1);
-
-            connection.Open();
-            command.Prepare();
-            Console.WriteLine("In prep command function");
-            return command;
-        }       
         */
     }
 }
