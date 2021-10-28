@@ -53,7 +53,7 @@ namespace SalesProject.Data
         // put the two parts of the sql string together
         // pass string and list of dates to prep command function which prepares this
         // reader function -> two types: multi column, single value (execute scalar?)
-        // prints output to console and returns success bool
+        // prints output to console or throws error
         internal void Read(int selectOption, int dateOption, IList<DateTime> date)
         {
             //generate sql query string
@@ -161,7 +161,7 @@ namespace SalesProject.Data
                     Sale sale = new Sale(salesID, productName, quantity, price, saleDate);
                     Console.WriteLine(sale);
                 }
-                catch (InvalidCastException e)
+                catch (InvalidCastException)
                 {
                     Console.WriteLine("There is no available data for this period.");
                 }

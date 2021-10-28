@@ -155,8 +155,7 @@ namespace SalesProject.Controller
             {
                 if (input.Contains(i.ToString()) || input.Contains(options[i - 1]))
                 { return i; }
-                    
-                
+                 
             }
             throw (new InvalidUserInputException("The value you entered could not be recognised as an option"));
             return 0;
