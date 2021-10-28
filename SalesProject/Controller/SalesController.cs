@@ -24,10 +24,7 @@ namespace SalesProject.Controller
             string[] menuOptions = {"data", "report", "q"};
             int option = getUserOption(menuOptions);
             return option;
-            // switch on option
-            //create or read
             //display sub menus
-
         }
 
         public void Create()
@@ -62,7 +59,7 @@ namespace SalesProject.Controller
             string[] readOptions = { "y", "m", "d", "between two y","between two m","between two d", "back" };
             int dateOption = getUserOption(readOptions);
             int loop = 1;
-            IList < DateTime > dates = new List<DateTime>();
+            IList <string> dates = new List<string>();
 
             if (dateOption > 3 && dateOption != 7)
             {
@@ -76,31 +73,33 @@ namespace SalesProject.Controller
                 switch (dateOption % 3)
                 {
                     case 0:
-                        Console.WriteLine("Enter the date to view (dd/mm/yyyy) \n> ");
+                        Console.WriteLine("Enter the date to view (dd/mm/yyyy)");
                         input = Console.ReadLine();
                         //dates.Add(GetInt("day"));
                         break;
                     case 2:
-                        Console.WriteLine("Enter the month to view (mm/yyyy) \n> ");
+                        Console.WriteLine("Enter the month to view (mm/yyyy)");
                         input = Console.ReadLine();
                         break;
                     case 1:
-                        Console.WriteLine("Enter the year to view (yyyy) \n> ");
+                        Console.WriteLine("Enter the year to view (yyyy)");
                         string filler = (loop == 1) ? "01/01/" : "31/12/";
                         input = filler + Console.ReadLine();
                         break;
                     default:
-                        // could get rid of ^break statement and put the next menu in a function
-                        // means you can go straight to ReadInDate or ReadBetweendates function in switch statement
-                        // or put the two decisions the other way round?
                         break;
                 }
-                
-            
-                DateTime date = DateTime.Parse(input);
-                dates.Add(date);
+                dates.Add(input);
             }
-            service.Read(functionOption, dateOption, dates);
+            try
+            {
+                service.Read(functionOption, dateOption, dates);
+            }
+            catch (OptionUnavailableException)
+            { 
+                
+            }
+            
 
 
 

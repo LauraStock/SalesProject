@@ -41,7 +41,6 @@ namespace SalesProject
                         break;
                 }
             }
-            
         }
 
         internal void ReadMenu()
@@ -57,10 +56,5 @@ namespace SalesProject
             Console.WriteLine("7. Back");
             controller.ReadMenu1();
         }
-
-
-        
-
-        
     }
 }

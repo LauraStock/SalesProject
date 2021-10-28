@@ -16,7 +16,6 @@ namespace SalesProject.Data
         {
             this.connection = connection;
             SetupDB();
-
         }
 
         internal void SetupDB() //runs the dbSetup.sql file to create sales db if it doesn't already exist.
@@ -55,16 +54,6 @@ namespace SalesProject.Data
         // pass string and list of dates to prep command function which prepares this
         // reader function -> two types: multi column, single value (execute scalar?)
         // prints output to console and returns success bool
-        /*
-        internal IList<Sale> ReadOutList(int dateOption, IList<DateTime> date)
-        {
-            string selectQuery = "SELECT * FROM sales "; // output type IList
-            string condQuery = ConditionQuery(dateOption);
-            string query = selectQuery + condQuery;
-            Console.WriteLine(query);
-        }
-        */
-
         internal void Read(int selectOption, int dateOption, IList<DateTime> date)
         {
             //generate sql query string
@@ -127,7 +116,7 @@ namespace SalesProject.Data
         internal void ReadOutDouble(MySqlCommand command)
         {
             double result = Convert.ToDouble(command.ExecuteScalar());
-            Console.WriteLine($"The result is £{result}");
+            Console.WriteLine($"The result is {String.Format("{0:C2}", result)}");
         }
 
         internal void ReadOutSale(MySqlCommand command)
@@ -138,7 +127,7 @@ namespace SalesProject.Data
             while (reader.Read())
             {
                 int salesID = reader.GetFieldValue<int>(0);
-                Console.WriteLine(salesID);
+                //Console.WriteLine(salesID);
 
                 string productName = reader.GetFieldValue<string>(1);
                 int quantity = reader.GetFieldValue<int>(2);
@@ -202,6 +191,7 @@ namespace SalesProject.Data
                 case 4:
                     sqlCondition = sqlCondition + "YEAR(SaleDate) BETWEEN @year1 AND @year2";
                     break;
+                    // How to do between full dates?
             }
             return sqlCondition;
         }

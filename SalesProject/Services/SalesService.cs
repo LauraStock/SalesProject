@@ -1,4 +1,5 @@
 ﻿using SalesProject.Data;
+using SalesProject.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,24 +27,32 @@ namespace SalesProject.Services
             Console.WriteLine("Creation has run");
         }
 
-        public void Read(int selectOption, int dateOption, IList<DateTime> date)
+        public void Read(int selectOption, int dateOption, IList<String> input)
         {
-            //date = ValidateDates(dateOption, date);
-
             // if there's one date -> make the second one +1 year or month
             // if there's two dates -> make the second one +1 year or month
             // cahnge dateOption depending on the number of variables needing to be prepared for the SQL query
 
             // send dateOption (1 for year, 2 for month and three for day - number of var that needs preparing) and list of two dates
             // switch on the selectOption depending on output type
-            Console.WriteLine("We are in service read");
-            Console.WriteLine($"Select is ${selectOption}\n date option is ${dateOption}");
+            //Console.WriteLine("We are in service read");
+            //Console.WriteLine($"Select is ${selectOption}\n date option is ${dateOption}");
+            IList<DateTime> dates = new List<DateTime>();
 
-            if (dateOption < 4) {
-                repo.Read(selectOption,dateOption,date);
+            for (int i = 0; i < input.Count; i++)
+            {
+                DateTime date = DateTime.Parse(input[i]);
+                dates.Add(date);
             }
 
-
+            if (dateOption < 5)
+            {
+                repo.Read(selectOption, dateOption, dates);
+            }
+            else
+            {
+                throw (new OptionUnavailableException("This date option has not been added yet"));
+            }
         }
 
         internal IList<string> ConditionVariables(int dateOption, IList<DateTime> dates)
@@ -80,7 +89,7 @@ namespace SalesProject.Services
 
 
             }
-            Console.WriteLine($"date count is {dates.Count}");
+            //Console.WriteLine($"date count is {dates.Count}");
 
             // loop through each date
             for (int i = 0; i < 2; i++)
@@ -88,7 +97,6 @@ namespace SalesProject.Services
                 // loop through year, month, day
                 for (int j = 1; j <= 3; j++)
                 {
-                    Console.WriteLine($"i is {i}, j is {j}");
                     //Console.WriteLine("Ready to write date variables");
                     if (j <= dateOption)
                     {
@@ -119,7 +127,7 @@ namespace SalesProject.Services
             return conditionVariables;
         }
 
-            internal IList<int> ValidateDates(int numDates, IList<DateTime> date)
+        internal IList<int> ValidateDates(int numDates, IList<DateTime> date)
         {
             if (numDates == 2)
             {
@@ -139,11 +147,8 @@ namespace SalesProject.Services
             // fill in any missing gaps
 
             // if any of the values are 0 - only use the ones before that, at minimum will have the years
-            // check which date is the lower one is the lower one
             return (IList<int>)date;
         }
-
-        
 
         internal int checkIsInt(string input)
         {
@@ -170,7 +175,5 @@ namespace SalesProject.Services
                 return 0;
             }
         }
-               
-        
-}
+    }
 }
