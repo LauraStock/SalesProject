@@ -16,15 +16,6 @@ namespace SalesProject
 
             using (connection = MySqlUtils.GetConnection())
             {
-                string date = "06/2021";
-                DateTime thisDate = DateTime.Parse(date);
-                
-                Console.WriteLine(thisDate);
-                Console.WriteLine(thisDate.Year);
-                Console.WriteLine(thisDate.AddYears(1));
-                
-
-                
                 SalesRepository repo = new SalesRepository(connection);
                 SalesService service = new SalesService(repo);
                 SalesController controller = new SalesController(service);
@@ -43,8 +34,6 @@ namespace SalesProject
                 //connection.Ping();
                 //bool connectionOpen = connection.Ping();
                 //Console.WriteLine($"Connection status: {connection.State} \nPing successfull: {connectionOpen} \nDB Version: {connection.ServerVersion}");
-
-
 
             }
         }

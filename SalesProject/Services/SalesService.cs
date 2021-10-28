@@ -38,116 +38,48 @@ namespace SalesProject.Services
             //Console.WriteLine("We are in service read");
             //Console.WriteLine($"Select is ${selectOption}\n date option is ${dateOption}");
             IList<DateTime> dates = new List<DateTime>();
+            try
+            {
+                for (int i = 0; i < input.Count; i++)
+                {
 
-            for (int i = 0; i < input.Count; i++)
-            {
-                DateTime date = DateTime.Parse(input[i]);
-                dates.Add(date);
-            }
+                    DateTime date = DateTime.Parse(input[i]);
+                    dates.Add(date);
+                }
+                dates = FormatDates(dateOption, dates);
 
-            if (dateOption < 5)
-            {
-                repo.Read(selectOption, dateOption, dates);
+                if (dateOption < 7)
+                {
+                    repo.Read(selectOption, dateOption, dates);
+                }
+                else
+                {
+                    throw (new OptionUnavailableException("This date option has not been added yet"));
+                }
             }
-            else
+            catch (FormatException)
             {
-                throw (new OptionUnavailableException("This date option has not been added yet"));
+                Console.WriteLine("The date you entered could not be recognised.");
             }
+            
         }
 
-        internal IList<string> ConditionVariables(int dateOption, IList<DateTime> dates)
+        internal IList<DateTime> FormatDates(int dateOption, IList<DateTime> dates)
         {
-            IList<string> conditionVariables = new List<string>();
-
-            if (dates.Count == 1)
+            // need to make the between date options inclusive as between function on sql is val1<= date <val2 for months and days
+            if (dateOption == 5)
             {
-                switch (dateOption)
-                {
-                    case 1:
-                        dates.Add(dates[0].AddYears(1));
-                        break;
-                    case 2:
-                        dates.Add(dates[0].AddMonths(1));
-                        break;
-                    case 3:
-                        dates.Add(dates[0]);
-                        break;
-                }
-            } else
-            {
-                switch (dateOption)
-                {
-                    case 1:
-                        dates[1] = dates[1].AddYears(1);
-                        break;
-                    case 2:
-                        dates[1] = dates[1].AddMonths(1);
-                        break;
-                    case 3:
-                        break;
-                }
-
-
+                //Console.WriteLine($"Dates are {dates[0]} and {dates[1]}");
+                dates[1] = dates[1].AddMonths(1);
+                //Console.WriteLine($"New Dates are {dates[0]} and {dates[1]}");
             }
-            //Console.WriteLine($"date count is {dates.Count}");
-
-            // loop through each date
-            for (int i = 0; i < 2; i++)
+            else if (dateOption == 6)
             {
-                // loop through year, month, day
-                for (int j = 1; j <= 3; j++)
-                {
-                    //Console.WriteLine("Ready to write date variables");
-                    if (j <= dateOption)
-                    {
-                        switch (j)
-                        {
-                            case 1:
-                                conditionVariables.Add(dates[i].Year.ToString());
-                                break;
-                            case 2:
-                                conditionVariables.Add(dates[i].Month.ToString());
-                                break;
-                            case 3:
-                                conditionVariables.Add(dates[i].Day.ToString());
-                                break;
-                        }
-                        
-                    }
-                    else
-                    {
-                        conditionVariables.Add("00");
-                    }
-                    // if j <= dateOption add the dates[i] variable, otherwise add 0
-                    
-                }
-                //Console.WriteLine(dates[i]);
-
+                //Console.WriteLine($"Dates are {dates[0]} and {dates[1]}");
+                dates[1] = dates[1].AddDays(1);
+                //Console.WriteLine($"New Dates are {dates[0]} and {dates[1]}");
             }
-            return conditionVariables;
-        }
-
-        internal IList<int> ValidateDates(int numDates, IList<DateTime> date)
-        {
-            if (numDates == 2)
-            {
-                int numValues = date.Count / 2;
-                DateTime now = DateTime.Now;
-                
-            }
-            // if between two dates (numDates == 2)
-            // split list into two?
-            //check number of elements in each half
-            // validate years - pad to 4 digits and check between values
-            // check which is lower
-            // validate months
-            // check which is first
-            // validate days
-            // check which is first
-            // fill in any missing gaps
-
-            // if any of the values are 0 - only use the ones before that, at minimum will have the years
-            return (IList<int>)date;
+            return dates;
         }
 
         internal int checkIsInt(string input)

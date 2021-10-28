@@ -59,11 +59,17 @@ namespace SalesProject.Data
             //generate sql query string
             string sqlQuery = SelectQuery(selectOption);
             sqlQuery = sqlQuery + ConditionQuery(dateOption);
-            Console.WriteLine(sqlQuery);
+            //Console.WriteLine(sqlQuery);
 
             //prepare command 
             connection.Open();
             MySqlCommand command = PrepReadCommand(sqlQuery, dateOption, date);
+
+            // Make output pretty
+            Console.Clear();
+            string[] selectOptionString = { "sales", "total value of sales", "minimum sale", "maximum sale", "average sale", "number of sales" };
+            string dateOptionString = (dateOption < 4) ? $"{date[0].Date}" : $"{date[0].Date} to {date[1].Date}";
+            Console.WriteLine($"The {selectOptionString[selectOption-1]} for the period {dateOptionString} is:");
 
             switch (selectOption) // 1-view all, 2-total, 3-min, 4-max, 5-average,6-count
             {
@@ -90,12 +96,17 @@ namespace SalesProject.Data
         {
             IList< Sale > saleList = new List<Sale>();
             MySqlDataReader reader = command.ExecuteReader();
-            Console.WriteLine(reader.HasRows);
+
+            if (!reader.HasRows)
+            {
+                Console.WriteLine("There is no available data for this period.");
+            }
+            //Console.WriteLine(reader.HasRows);
 
             while (reader.Read())
             {
                 int salesID = reader.GetFieldValue<int>(0);
-                Console.WriteLine(salesID);
+                //Console.WriteLine(salesID);
                 
                 string productName = reader.GetFieldValue<string>(1);
                 int quantity = reader.GetFieldValue<int>(2);
@@ -111,38 +122,60 @@ namespace SalesProject.Data
             {
                 Console.WriteLine(saleList[i]);
             }
+            Console.WriteLine("\n");
         }
 
         internal void ReadOutDouble(MySqlCommand command)
         {
-            double result = Convert.ToDouble(command.ExecuteScalar());
-            Console.WriteLine($"The result is {String.Format("{0:C2}", result)}");
+            try
+            {
+                double result = Convert.ToDouble(command.ExecuteScalar());
+                Console.WriteLine($"The result is {String.Format("{0:C2}", result)} \n");
+            }
+            catch (InvalidCastException)
+            {
+                Console.WriteLine("There is no available data for this period.");
+            }
+            
+            
         }
 
         internal void ReadOutSale(MySqlCommand command)
         { 
             MySqlDataReader reader = command.ExecuteReader();
-            Console.WriteLine(reader.HasRows);
+            //Console.WriteLine(reader.HasRows);
+
+            // need to say there was nothing in the database if hasrows returns false
 
             while (reader.Read())
             {
-                int salesID = reader.GetFieldValue<int>(0);
-                //Console.WriteLine(salesID);
+                try
+                {
+                    int salesID = reader.GetFieldValue<int>(0);
+                    //Console.WriteLine(salesID);
 
-                string productName = reader.GetFieldValue<string>(1);
-                int quantity = reader.GetFieldValue<int>(2);
-                double price = reader.GetFieldValue<double>(3);
-                DateTime saleDate = reader.GetFieldValue<DateTime>(4);
-                Sale sale = new Sale(salesID, productName, quantity, price, saleDate);
-                Console.WriteLine(sale);
+                    string productName = reader.GetFieldValue<string>(1);
+                    int quantity = reader.GetFieldValue<int>(2);
+                    double price = reader.GetFieldValue<double>(3);
+                    DateTime saleDate = reader.GetFieldValue<DateTime>(4);
+                    Sale sale = new Sale(salesID, productName, quantity, price, saleDate);
+                    Console.WriteLine(sale);
+                }
+                catch (InvalidCastException e)
+                {
+                    Console.WriteLine("There is no available data for this period.");
+                }
+                
             }            
             reader.Close();
+            Console.WriteLine("\n");
         }
 
         internal void ReadOutInt(MySqlCommand command)
         {
             int result = Convert.ToInt32(command.ExecuteScalar());
             Console.WriteLine($"The number of sales is {result}");
+            Console.WriteLine("\n");
         }
         
         internal string SelectQuery(int selectOption)
@@ -189,9 +222,13 @@ namespace SalesProject.Data
                     sqlCondition = sqlCondition + " YEAR(SaleDate) = @year1";
                     break;
                 case 4:
-                    sqlCondition = sqlCondition + "YEAR(SaleDate) BETWEEN @year1 AND @year2";
+                    sqlCondition = sqlCondition + " YEAR(SaleDate) BETWEEN @year1 AND @year2";
                     break;
-                    // How to do between full dates?
+                case 5:
+                    goto case 6;
+                case 6:
+                    sqlCondition = sqlCondition + " SaleDate BETWEEN @date1 AND @date2";
+                    break;
             }
             return sqlCondition;
         }
@@ -214,6 +251,14 @@ namespace SalesProject.Data
                 case 4:
                     command.Parameters.AddWithValue("@year2", date[1].Year);
                     goto case 1;
+                case 5:
+                    goto case 6;
+                case 6:
+                    //Console.WriteLine($"Dates are {date[0]} and {date[1]}");
+                    command.Parameters.AddWithValue("@date1", date[0].Date);
+                    command.Parameters.AddWithValue("@date2",date[1].Date);
+                    //Console.WriteLine(command.CommandText);
+                    break;
             }
             command.Prepare();
             return command;

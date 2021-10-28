@@ -22,7 +22,15 @@ namespace SalesProject.Controller
             // take input from user
             // parse input to select option
             string[] menuOptions = {"data", "report", "q"};
-            int option = getUserOption(menuOptions);
+            int option = 0;
+            try
+            {
+                option = getUserOption(menuOptions);
+            }
+            catch (InvalidUserInputException e)
+            {
+                Console.WriteLine(e);
+            }
             return option;
             //display sub menus
         }
@@ -43,20 +51,28 @@ namespace SalesProject.Controller
 
         public void ReadMenu1()
         {
-            string[] funOptions = { "all", "total", "min", "max", "av", "count", "b" };
-            int functionOption = getUserOption(funOptions);
-            // option for function to be carried out should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count, 7-back
-            if (functionOption < 7)
+            try
             {
-                ReadMenu2(functionOption);
-            }              
+                string[] funOptions = { "all", "total", "min", "max", "av", "count", "b" };
+                int functionOption = getUserOption(funOptions);
+                // option for function to be carried out should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count, 7-back
+                if (functionOption < 7)
+                {
+                    ReadMenu2(functionOption);
+                }
+            }
+            catch (InvalidUserInputException e)
+            {
+                Console.WriteLine(e);
+            }
+                         
         }
 
         public void ReadMenu2(int functionOption)
         {
             Console.WriteLine("For what period?");
             Console.Write("1. A Year \n2. A Month \n3. A Day \n4. Between two years \n5. Between two months \n6. Between two dates \n7. Back");
-            string[] readOptions = { "y", "m", "d", "between two y","between two m","between two d", "back" };
+            string[] readOptions = { "y", "m", "da", "between two y","between two m","between two d", "back" };
             int dateOption = getUserOption(readOptions);
             int loop = 1;
             IList <string> dates = new List<string>();
@@ -139,8 +155,10 @@ namespace SalesProject.Controller
             {
                 if (input.Contains(i.ToString()) || input.Contains(options[i - 1]))
                 { return i; }
-                // need to throw an exception here
+                    
+                
             }
+            throw (new InvalidUserInputException("The value you entered could not be recognised as an option"));
             return 0;
         }
 
