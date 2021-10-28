@@ -20,7 +20,7 @@ namespace SalesProject
 
             while (inLoop)
             {
-                Console.Clear();
+                //Console.Clear();
                 Console.WriteLine("-----SALES-----");
                 Console.WriteLine("1. Data Entry");
                 Console.WriteLine("2. Reports");
@@ -41,7 +41,6 @@ namespace SalesProject
                         break;
                 }
             }
-            
         }
 
         internal void ReadMenu()
@@ -49,17 +48,13 @@ namespace SalesProject
             Console.Clear();
             Console.WriteLine("What would you like to view?");
             Console.WriteLine("1. All sales");
-            Console.WriteLine("2. Total sales");
+            Console.WriteLine("2. Total value of sales");
             Console.WriteLine("3. Minimum price");
             Console.WriteLine("4. Maximum price");
             Console.WriteLine("5. Average price");
-            Console.WriteLine("6. Back");
+            Console.WriteLine("6. Count sales");
+            Console.WriteLine("7. Back");
             controller.ReadMenu1();
         }
-
-
-        
-
-        
     }
 }

@@ -22,12 +22,17 @@ namespace SalesProject.Controller
             // take input from user
             // parse input to select option
             string[] menuOptions = {"data", "report", "q"};
-            int option = getUserOption(menuOptions);
+            int option = 0;
+            try
+            {
+                option = getUserOption(menuOptions);
+            }
+            catch (InvalidUserInputException e)
+            {
+                Console.WriteLine(e);
+            }
             return option;
-            // switch on option
-            //create or read
             //display sub menus
-
         }
 
         public void Create()
@@ -46,62 +51,74 @@ namespace SalesProject.Controller
 
         public void ReadMenu1()
         {
-            string[] funOptions = { "all", "total", "min", "max", "av", "b" };
-            int functionOption = getUserOption(funOptions);
-            // option for function to be carried out should be 0-read all, 1-total, 2-min, 3-max, 4-average
-            if (functionOption < 6)
+            try
             {
-                ReadMenu2(functionOption);
-            }              
+                string[] funOptions = { "all", "total", "min", "max", "av", "count", "b" };
+                int functionOption = getUserOption(funOptions);
+                // option for function to be carried out should be 1-read all, 2-total, 3-min, 4-max, 5-average, 6-count, 7-back
+                if (functionOption < 7)
+                {
+                    ReadMenu2(functionOption);
+                }
+            }
+            catch (InvalidUserInputException e)
+            {
+                Console.WriteLine(e);
+            }
+                         
         }
 
         public void ReadMenu2(int functionOption)
         {
             Console.WriteLine("For what period?");
             Console.Write("1. A Year \n2. A Month \n3. A Day \n4. Between two years \n5. Between two months \n6. Between two dates \n7. Back");
-            string[] readOptions = { "y", "m", "d", "between two y","between two m","between two d", "back" };
+            string[] readOptions = { "y", "m", "da", "between two y","between two m","between two d", "back" };
             int dateOption = getUserOption(readOptions);
             int loop = 1;
+            IList <string> dates = new List<string>();
 
             if (dateOption > 3 && dateOption != 7)
             {
                 loop = 2; // number of dates that need to be collected
             }
 
-            int[] dates = { };
-
             for (int i = 0; i < loop; i++)
             {   if (dateOption == 7)
-                { break; }
-                Console.WriteLine($"date option % 3 is {dateOption % 3}");
+                { return; }
+                string input = "";
                 switch (dateOption % 3)
                 {
                     case 0:
-                        dates.Append(GetInt("day"));
-                        goto case 2;
+                        Console.WriteLine("Enter the date to view (dd/mm/yyyy)");
+                        input = Console.ReadLine();
+                        //dates.Add(GetInt("day"));
+                        break;
                     case 2:
-                        dates.Append(GetMonth());
-                        goto case 1;
+                        Console.WriteLine("Enter the month to view (mm/yyyy)");
+                        input = Console.ReadLine();
+                        break;
                     case 1:
-                        dates.Append(GetInt("year"));
+                        Console.WriteLine("Enter the year to view (yyyy)");
+                        string filler = (loop == 1) ? "01/01/" : "31/12/";
+                        input = filler + Console.ReadLine();
                         break;
                     default:
-                        // could get rid of ^break statement and put the next menu in a function
-                        // means you can go straight to ReadInDate or ReadBetweendates function in switch statement
-                        // or put the two decisions the other way round?
                         break;
                 }
+                dates.Add(input);
             }
-
-            if (loop == 2)
+            try
             {
-                service.ReadBetweenDates(functionOption, dates);
+                service.Read(functionOption, dateOption, dates);
             }
-            else
-            {
-                service.ReadInDate(functionOption, dates);
+            catch (OptionUnavailableException)
+            { 
+                
             }
             
+
+
+
         }
 
         internal int GetInt(string timeFrame)
@@ -124,7 +141,7 @@ namespace SalesProject.Controller
         {
             Console.Clear();
             Console.Write("What month would you like to view? (if not applicable, enter 0)");
-            string[] monthOptions = { "jan", "feb", "mar", "apr", "may", "jun", "aug", "sep", "oct", "nov", "dec" };
+            string[] monthOptions = { "jan", "feb", "mar", "apr", "may", "jun","jul", "aug", "sep", "oct", "nov", "dec" };
             int month = getUserOption(monthOptions);
             return month;
         }
@@ -138,8 +155,9 @@ namespace SalesProject.Controller
             {
                 if (input.Contains(i.ToString()) || input.Contains(options[i - 1]))
                 { return i; }
-                // need to throw an exception here
+                 
             }
+            throw (new InvalidUserInputException("The value you entered could not be recognised as an option"));
             return 0;
         }
 

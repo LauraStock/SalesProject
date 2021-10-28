@@ -35,8 +35,6 @@ namespace SalesProject
                 //bool connectionOpen = connection.Ping();
                 //Console.WriteLine($"Connection status: {connection.State} \nPing successfull: {connectionOpen} \nDB Version: {connection.ServerVersion}");
 
-
-
             }
         }
     }

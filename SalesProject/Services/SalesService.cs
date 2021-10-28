@@ -1,4 +1,5 @@
 ﻿using SalesProject.Data;
+using SalesProject.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,26 +27,59 @@ namespace SalesProject.Services
             Console.WriteLine("Creation has run");
         }
 
-        public void ReadInDate(int function, int[] date)
-        {   
-            //check for valid dates
-            // add 0 for missing values 
-            // pass to repo
-            // option should be 0-read all, 1-total, 2-min, 3-max, 4-average
-            // if month is passed, can also select for month
-            // check if year is 4 characters and within specific dates, same for days
-            IList<Sale> saleList = repo.Read(function, date);
-            // does the database contain anything for this time period?
-            foreach (Sale thing in saleList)
+        public void Read(int selectOption, int dateOption, IList<String> input)
+        {
+            // if there's one date -> make the second one +1 year or month
+            // if there's two dates -> make the second one +1 year or month
+            // cahnge dateOption depending on the number of variables needing to be prepared for the SQL query
+
+            // send dateOption (1 for year, 2 for month and three for day - number of var that needs preparing) and list of two dates
+            // switch on the selectOption depending on output type
+            //Console.WriteLine("We are in service read");
+            //Console.WriteLine($"Select is ${selectOption}\n date option is ${dateOption}");
+            IList<DateTime> dates = new List<DateTime>();
+            try
             {
-                Console.WriteLine(thing);
+                for (int i = 0; i < input.Count; i++)
+                {
+
+                    DateTime date = DateTime.Parse(input[i]);
+                    dates.Add(date);
+                }
+                dates = FormatDates(dateOption, dates);
+
+                if (dateOption < 7)
+                {
+                    repo.Read(selectOption, dateOption, dates);
+                }
+                else
+                {
+                    throw (new OptionUnavailableException("This date option has not been added yet"));
+                }
             }
+            catch (FormatException)
+            {
+                Console.WriteLine("The date you entered could not be recognised.");
+            }
+            
         }
 
-        public void ReadBetweenDates(int function, int[] date)
-        { 
-            // if any of the values are 0 - only use the ones before that, at minimum will have the years
-            // check which date is the lower one is the lower one
+        internal IList<DateTime> FormatDates(int dateOption, IList<DateTime> dates)
+        {
+            // need to make the between date options inclusive as between function on sql is val1<= date <val2 for months and days
+            if (dateOption == 5)
+            {
+                //Console.WriteLine($"Dates are {dates[0]} and {dates[1]}");
+                dates[1] = dates[1].AddMonths(1);
+                //Console.WriteLine($"New Dates are {dates[0]} and {dates[1]}");
+            }
+            else if (dateOption == 6)
+            {
+                //Console.WriteLine($"Dates are {dates[0]} and {dates[1]}");
+                dates[1] = dates[1].AddDays(1);
+                //Console.WriteLine($"New Dates are {dates[0]} and {dates[1]}");
+            }
+            return dates;
         }
 
         internal int checkIsInt(string input)
@@ -73,21 +107,5 @@ namespace SalesProject.Services
                 return 0;
             }
         }
-
-        internal DateTime checkIsDateTime(string input)
-        {
-            if (DateTime.TryParse(input, out DateTime value))
-            {
-                return value;
-            }
-            else
-            {
-                Console.WriteLine("We need to throw an exception here");
-                return DateTime.Now;
-            }
-
-        }
-        
-        
-}
+    }
 }
