@@ -32,7 +32,7 @@ The time options are
 The code for connecting to the MySQL database through C# is from Morgan from QA.
 
 ## Evaluation
-
+This project had to be re-evaluated several times due to the differences in data types between MySQL and C# which resulted in different SQL queries being needed for viewing sales records for a particular year/month/day versus between two dates. In the future the easiest way to go about this would be to plan the functionality needed and work from the MySQL queries and connection in C# to the service, and then controller as manipulating the C# code to gather the data in the correct format is the easier part to redo. Overall this project was fairly successful but could do with some more refactoring to reduce the amount of code.
 
 ## Planning
 The Jira board for this project can be found at https://tdp-demo.atlassian.net/jira/software/projects/QCSP/boards/2/roadmap
