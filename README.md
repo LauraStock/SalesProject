@@ -1,13 +1,14 @@
 # SalesProject
 
-Console Sales app project using C# and mySQL for QA Academy. 
+Console Sales app project using C# and mySQL for QA Academy. Please note the working application is contained on the development branch of github.
 
 ## Getting Started
 1. Clone the repository and open 
-2. Open MySQL workbench
-3. Check the details of the MySQL connection match the information in SalesProject > Data > MySqlUtils.cs. 
-4. To check the database connection, uncomment the first section of code in Program.cs
-5. Once this is working, run Program.cs
+2. Checkout to development branch
+3. Open MySQL workbench
+4. Check the details of the MySQL connection match the information in SalesProject > Data > MySqlUtils.cs. 
+5. To check the database connection, uncomment the first section of code in Program.cs
+6. Once this is working, run Program.cs
 
 ## Features
 The user can select to Create a sale in the database or Read from the database. 
