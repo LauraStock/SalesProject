@@ -33,7 +33,6 @@ namespace SalesProject.Data
             MySqlCommand command = connection.CreateCommand();
 
             command.CommandText = MySqlString;
-            Console.WriteLine($"nom: {item.productName}");
             command.Parameters.AddWithValue("@productName", $"{item.productName}");
             command.Parameters.AddWithValue("@quantity",item.quantity);
             command.Parameters.AddWithValue("@price",item.price);

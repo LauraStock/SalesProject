@@ -46,7 +46,10 @@ namespace SalesProject.Controller
             string price = Console.ReadLine();
             Console.WriteLine($"The sale to add is: \n{productName} \nQuantity {quantity} \nPrice {price} \n \n Continue? (Y/N)");
             string go = Console.ReadLine();
-            service.Create(productName,quantity,price);
+            if (go.ToLower().Contains("y"))
+            {
+                service.Create(productName, quantity, price);
+            }            
         }
 
         public void ReadMenu1()
