@@ -115,10 +115,6 @@ namespace SalesProject.Controller
             { 
                 
             }
-            
-
-
-
         }
 
         internal int GetInt(string timeFrame)
