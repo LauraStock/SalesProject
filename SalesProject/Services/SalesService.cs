@@ -19,12 +19,18 @@ namespace SalesProject.Services
         public void Create(string productName, string quantityString, string priceString)
         {
             // need to check and change quantity and price to numbers
-            int quantity = checkIsInt(quantityString);
-            double price = checkIsDouble(priceString);
-            Console.WriteLine("We are in create in the service");
-            Sale item = new Sale(productName, quantity, price);
-            repo.Create(item);
-            Console.WriteLine("Creation has run");
+            try
+            {
+                int quantity = checkIsInt(quantityString);
+                double price = checkIsDouble(priceString);
+                Sale item = new Sale(productName, quantity, price);
+                repo.Create(item);
+                Console.WriteLine("Item has been added to the database");
+            } catch (InvalidCastException)
+            {
+                Console.WriteLine("The value you entered is not valid.");
+            }
+            
         }
 
         public void Read(int selectOption, int dateOption, IList<String> input)
@@ -90,7 +96,7 @@ namespace SalesProject.Services
             }
             else
             {
-                Console.WriteLine("We need to throw an exception here");
+                throw new InvalidCastException;
                 return 0;
             }
         }
@@ -103,7 +109,7 @@ namespace SalesProject.Services
             }
             else
             {
-                Console.WriteLine("We need to throw an exception here");
+                throw new InvalidCastException; 
                 return 0;
             }
         }
