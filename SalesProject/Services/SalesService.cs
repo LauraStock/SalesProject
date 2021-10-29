@@ -96,7 +96,7 @@ namespace SalesProject.Services
             }
             else
             {
-                throw new InvalidCastException;
+                throw new InvalidCastException();
                 return 0;
             }
         }
@@ -109,7 +109,7 @@ namespace SalesProject.Services
             }
             else
             {
-                throw new InvalidCastException; 
+                throw new InvalidCastException(); 
                 return 0;
             }
         }
